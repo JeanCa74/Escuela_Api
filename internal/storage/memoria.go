@@ -8,11 +8,14 @@ import (
 
 // Memoria es un almacén unificado en RAM; se usa como fake en los tests de handler.
 type Memoria struct {
-	estudiantes     []models.Estudiante
+	estudiantes      []models.Estudiante
 	nextEstudianteID int
 
 	cursos      []models.Curso
 	nextCursoID int
+
+	inscripciones      []models.Inscripcion
+	nextInscripcionID  int
 
 	mu sync.Mutex
 }
@@ -20,10 +23,12 @@ type Memoria struct {
 // NuevaMemoria crea un almacén vacío listo para usar.
 func NuevaMemoria() *Memoria {
 	return &Memoria{
-		estudiantes:      []models.Estudiante{},
-		nextEstudianteID: 1,
-		cursos:           []models.Curso{},
-		nextCursoID:      1,
+		estudiantes:       []models.Estudiante{},
+		nextEstudianteID:  1,
+		cursos:            []models.Curso{},
+		nextCursoID:       1,
+		inscripciones:     []models.Inscripcion{},
+		nextInscripcionID: 1,
 	}
 }
 
@@ -125,6 +130,38 @@ func (m *Memoria) CrearCurso(c models.Curso) models.Curso {
 	m.nextCursoID++
 	m.cursos = append(m.cursos, c)
 	return c
+}
+
+// =========================================================
+// INSCRIPCIONES
+// =========================================================
+
+func (m *Memoria) ListarInscripciones() []models.Inscripcion {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	copia := make([]models.Inscripcion, len(m.inscripciones))
+	copy(copia, m.inscripciones)
+	return copia
+}
+
+func (m *Memoria) BuscarInscripcionPorID(id int) (models.Inscripcion, bool) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	for _, i := range m.inscripciones {
+		if i.ID == id {
+			return i, true
+		}
+	}
+	return models.Inscripcion{}, false
+}
+
+func (m *Memoria) CrearInscripcion(i models.Inscripcion) models.Inscripcion {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	i.ID = m.nextInscripcionID
+	m.nextInscripcionID++
+	m.inscripciones = append(m.inscripciones, i)
+	return i
 }
 
 // Chequeo en tiempo de compilación: Memoria debe cumplir Almacen.

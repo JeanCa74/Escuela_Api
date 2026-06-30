@@ -18,10 +18,18 @@ type CursoRepository interface {
 	CrearCurso(c models.Curso) models.Curso
 }
 
-// Almacen combina ambos repositorios del dominio escolar.
+// InscripcionRepository es el contrato de persistencia de inscripciones.
+type InscripcionRepository interface {
+	ListarInscripciones() []models.Inscripcion
+	BuscarInscripcionPorID(id int) (models.Inscripcion, bool)
+	CrearInscripcion(i models.Inscripcion) models.Inscripcion
+}
+
+// Almacen combina los tres repositorios del dominio escolar.
 type Almacen interface {
 	EstudianteRepository
 	CursoRepository
+	InscripcionRepository
 }
 
 // UserRepository es el contrato de persistencia de usuarios (para auth).

@@ -12,6 +12,7 @@ var (
 	ErrNombreVacio           = errors.New("el campo nombre es obligatorio")
 	ErrEmailVacio            = errors.New("el campo email es obligatorio")
 	ErrCreditosInvalidos     = errors.New("los creditos deben ser mayores a cero")
+	ErrCalificacionInvalida  = errors.New("la calificacion debe estar entre 0 y 10")
 	ErrNoEncontrado          = errors.New("recurso no encontrado")
 	ErrEmailEnUso            = errors.New("el email ya esta registrado")
 	ErrCredencialesInvalidas = errors.New("email o contrasena incorrectos")

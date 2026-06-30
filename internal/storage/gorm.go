@@ -19,7 +19,7 @@ func NuevoAlmacenGORM(dsn string) (*AlmacenGORM, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := db.AutoMigrate(&models.Estudiante{}, &models.Curso{}, &models.Usuario{}); err != nil {
+	if err := db.AutoMigrate(&models.Estudiante{}, &models.Curso{}, &models.Inscripcion{}, &models.Usuario{}); err != nil {
 		return nil, err
 	}
 	return &AlmacenGORM{db: db}, nil
@@ -84,6 +84,29 @@ func (a *AlmacenGORM) BuscarCursoPorID(id int) (models.Curso, bool) {
 func (a *AlmacenGORM) CrearCurso(c models.Curso) models.Curso {
 	a.db.Create(&c)
 	return c
+}
+
+// =========================================================
+// INSCRIPCIONES
+// =========================================================
+
+func (a *AlmacenGORM) ListarInscripciones() []models.Inscripcion {
+	var inscripciones []models.Inscripcion
+	a.db.Find(&inscripciones)
+	return inscripciones
+}
+
+func (a *AlmacenGORM) BuscarInscripcionPorID(id int) (models.Inscripcion, bool) {
+	var i models.Inscripcion
+	if err := a.db.First(&i, id).Error; err != nil {
+		return models.Inscripcion{}, false
+	}
+	return i, true
+}
+
+func (a *AlmacenGORM) CrearInscripcion(i models.Inscripcion) models.Inscripcion {
+	a.db.Create(&i)
+	return i
 }
 
 // =========================================================

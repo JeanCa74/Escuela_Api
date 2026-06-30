@@ -23,10 +23,12 @@ func main() {
 
 	// 2. Capa de servicio con inyección de dependencias.
 	estudianteSvc := service.NuevoEstudianteService(almacen)
+	cursoSvc := service.NuevoCursoService(almacen)
+	inscripcionSvc := service.NuevoInscripcionService(almacen)
 	authSvc := service.NuevoAuthService(almacen)
 
 	// 3. Server con los servicios inyectados.
-	servidor := handlers.NewServer(estudianteSvc, authSvc)
+	servidor := handlers.NewServer(estudianteSvc, cursoSvc, inscripcionSvc, authSvc)
 
 	// 4. Router + middleware global.
 	r := chi.NewRouter()
@@ -44,11 +46,22 @@ func main() {
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.Auth(authSvc))
 
+			// Módulo Jean Carlos — Estudiantes
 			r.Get("/estudiantes", servidor.ListarEstudiantes)
 			r.Post("/estudiantes", servidor.CrearEstudiante)
 			r.Get("/estudiantes/{id}", servidor.ObtenerEstudiante)
 			r.Put("/estudiantes/{id}", servidor.ActualizarEstudiante)
 			r.Delete("/estudiantes/{id}", servidor.BorrarEstudiante)
+
+			// Módulo Jhon — Cursos
+			r.Get("/cursos", servidor.ListarCursos)
+			r.Post("/cursos", servidor.CrearCurso)
+			r.Get("/cursos/{id}", servidor.ObtenerCurso)
+
+			// Módulo Maria José — Inscripciones
+			r.Get("/inscripciones", servidor.ListarInscripciones)
+			r.Post("/inscripciones", servidor.CrearInscripcion)
+			r.Get("/inscripciones/{id}", servidor.ObtenerInscripcion)
 		})
 	})
 
